@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login Page</title>
+
+  <ul>
+  <li><a href="profile">My Profile</a></li> 
+  <li><a href="quote">Fuel Quote</a></li> 
+  <li><a href="history">Fuel Quote History</a></li> 
+  <li><a href="/">Logout</a></li>
+</ul> 
+<style>   
+
+  ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: lightblue;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: blue;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: white;
+}
+Body {  
+  font-family: Helvetica Bold, Calibri, sans-serif;  
+  background-color: white;  
+}  
+button {   
+       background-color: #4CAF50;   
+       width: 100%;  
+        color: black;  
+        padding: 15px;   
+        margin: 10px 0px;   
+        border: none;   
+        cursor: pointer;   
+         }   
+ form {   
+        border: 3px solid #f1f1f1;   
+    }   
+ input[type=text], input[type=password] {   
+        width: 100%;   
+        margin: 8px 0;  
+        padding: 12px 20px;   
+        display: inline-block;   
+        border: 2px solid blue;   
+        box-sizing: border-box;   
+    }  
+ button:hover {   
+        opacity: 0.7;   
+    }   
+  .cancelbtn {   
+        width: auto;   
+        padding: 10px 18px;  
+        margin: 10px 5px;  
+    }     
+ .container {   
+        padding: 25px;   
+        background-color: lightblue;  
+    }   
+</style>   
+</head>
+
+<body>    
+    <center> <h1> Fuel Quote </h1> </center><br>
+<form method="post">
+    <div class="container">  
+    
+<label for="quantity">Gallons Requested (between 1 and 100):</label>
+<input type="number" id="quantity" name="quantity" min="1" max="5" required>  <br>
+<br><br>
+<label for="Delivery address">Delivery address:</label>
+<input type="text" placeholder="Data will be provided from backend" id="Delivery address" name="Delivery address" value="" readonly> <br>
+
+<br><br>
+<label for="Delivery date">Delivery Date:</label>
+<input type="datetime-local" id="datetime-local" name="Delivery date" required> <br><br>
+<br><br>
+<label for="Suggested Price / gallon">Suggested Price / gallon:</label>
+<input type="number" id="Suggested Price / gallon" name="Suggested Price / gallon" value="" readonly><br><br> 
+<br><br>
+<label for="Total Amount Due"> Total Amount Due:</label>
+<input type="number" id="Total Amount Due" name="Total Amount Due" value="" readonly><br><br>
+<button type="submit" class="submit"><a href="history">Submit</a></button>    
+<button type="submit" class="cancel">Cancel</button>
+</div>
+    </form>
+</body>     
+</html>

@@ -1,0 +1,66 @@
+
+    <!-- Fuel Quote History -->
+<ul>
+  <li><a href="profile">My Profile</a></li> 
+  <li><a href="quote">Fuel Quote</a></li> 
+  <li><a href="history">Fuel Quote History</a></li> 
+  <li><a href="/">Logout</a></li>
+</ul> 
+      <center><h1 class="mb-3">Fuel Quote History</h1></center>
+      <div class="container">
+      <table class="table">
+         <tr>
+            <th>Quote #</th>
+	         <th>Gallons Requested </th>
+            <th>Delivery Address </th>
+            <th>Delivery Date </th>
+            <th>Suggested Price / gallon</th>
+            <th>Total Amount Due </th>
+         </tr>
+        {% for i in orders %}
+          <tr>
+            <td>{{i[0]}}</td>
+	         <td>{{i[1]}}</td>
+            <td>{{i[2]}}</td>
+            <td>{{i[3]}}</td>
+            <td>{{i[4]}}</td>
+            <td>{{i[5]}}</td>
+         </tr>
+        {%endfor%}
+         <style>
+           ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: lightblue;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: blue;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: white;
+}
+table, th, td {
+  border:1px solid black;
+}
+.container {
+        padding: 25px;   
+        background-color: lightblue;  
+    }  
+</style>
+         </table>
+         </div>
+         
+         
+         
