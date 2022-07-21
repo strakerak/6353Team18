@@ -15,7 +15,7 @@ import hashlib
 #from requests_html import HTML, HTMLSession #Won't know if we need this yet
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mc67964:e4d415c6d3@66.248.199.216/mc67964'
+app.config['SQLALCHEMY_DATABASE_URI'] = '' #Removed for security purposes
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
