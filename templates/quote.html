@@ -73,27 +73,42 @@ button {
 </style>   
 </head>
 
-<body>    
-    <center> <h1> Fuel Quote </h1> </center><br>
+<body>
+<script>
+  function calcMargin(suggest)
+    {
+      if(document.getElementById("quantity").value>1000)
+      {
+        document.getElementById("SuggestedPrice").value = (((1.50) * (0.02)) + (suggest - 1.50)) + 1.50;
+      }
+      else
+      {
+        document.getElementById("SuggestedPrice").value = (((1.50) * (0.03)) + (suggest - 1.50)) + 1.50;
+      }
+      var total = document.getElementById("quantity").value * document.getElementById("SuggestedPrice").value;
+      document.getElementById("TotalAmount").value = Number(total).toFixed(2);
+    }
+</script>
+<center> <h1> Fuel Quote </h1> </center><br>
 <form method="post">
     <div class="container">  
     
-<label for="quantity">Gallons Requested (between 1 and 100):</label>
-<input type="number" id="quantity" name="quantity" min="1" max="5" required>  <br>
+<label for="quantity">Gallons Requested (between 1 and 10000):</label>
+<input type="number" id="quantity" name="quantity" min="1" max="10000" onChange="calcMargin({{suggest}});" required>  <br>
 <br><br>
 <label for="Delivery address">Delivery address:</label>
-<input type="text" placeholder="Data will be provided from backend" id="Delivery address" name="Delivery address" value="" readonly> <br>
+<input type="text" placeholder="{{address}}" id="Delivery address" name="Delivery address" value="" readonly> <br>
 
 <br><br>
 <label for="Delivery date">Delivery Date:</label>
-<input type="datetime-local" id="datetime-local" name="Delivery date" required> <br><br>
+<input type="datetime-local" id="datetime-local" name="DeliveryDate" required> <br><br>
 <br><br>
 <label for="Suggested Price / gallon">Suggested Price / gallon:</label>
-<input type="number" id="Suggested Price / gallon" name="Suggested Price / gallon" value="" readonly><br><br> 
+<input type="number" id="SuggestedPrice" name="SuggestedPrice" value={{suggest}} readonly><br><br> 
 <br><br>
 <label for="Total Amount Due"> Total Amount Due:</label>
-<input type="number" id="Total Amount Due" name="Total Amount Due" value="" readonly><br><br>
-<button type="submit" class="submit"><a href="history">Submit</a></button>    
+<input type="number" id="TotalAmount" name="TotalAmount" value="" readonly><br><br>
+<button type="submit" class="submit"><a href="history">Get Quote</a></button>    
 <button type="submit" class="cancel">Cancel</button>
 </div>
     </form>

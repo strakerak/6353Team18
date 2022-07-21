@@ -81,18 +81,32 @@ button {
         padding: 25px;   
         background-color: lightblue;  
     }   
-</style>   
+</style>
 </head>
-<body>    
+<body onload=checkNew("{{state}}");>
+  <script>
+    function checkNew(state)
+      {
+        if(state=="XX")
+        {
+          document.getElementsByName("fullname")[0].placeholder = "Full Name";
+          document.getElementsByName("address1")[0].placeholder = "Address";
+          document.getElementsByName("address2")[0].placeholder = "Alternate Address";
+          document.getElementsByName("city")[0].placeholder = "City";
+          document.getElementsByName("zipcode")[0].placeholder = "Zipcode";
+        }
+      }
+  </script>
     <center> <h1> Fuel Shoppe </h1> </center> 
 	<center> <h2> Update Profile</h2> </center>
+  <center><h2>{{username}}</h2></center>
   <center> <h3> {{error_message}} </h3></center>
     <form method="post">  
         <div class="container">   
-      <input type="text" placeholder="Full Name" name="fullname" maxlength="50" required>   
-			<input type="text" placeholder="Address 1" name="address1" maxlength="100" required>
-			<input type="text" placeholder="Address 2" name="address2" maxlength="100">
-			<input type="text" placeholder="City" name="city" maxlength="100" required>
+      <input type="text" value="{{fullname}}" name="fullname" maxlength="50" required>   
+			<input type="text" value="{{address1}}" name="address1" maxlength="100" required>
+			<input type="text" value="{{address2}}" name="address2" maxlength="100">
+			<input type="text" value="{{city}}" name="city" maxlength="100" required>
 			<select name="state" id="state">
 				<option value="AL">Alabama</option>
 				<option value="AK">Alaska</option>
@@ -146,8 +160,8 @@ button {
 				<option value="WI">Wisconsin</option>
 				<option value="WY">Wyoming</option>
 			</select>
-			<input type="text" placeholder="ZIP" name="zipcode" minlength="5" maxlength="9" required>
-            <button type="submit" class="updatebtn"><a href="quote">Update</a></button> 
+			<input type="text" value="{{zipcode}}" name="zipcode" minlength="5" maxlength="9" required>
+      <button type="submit" class="updatebtn"><a href="profile">Update</a></button> 
     </form>     
 	<button type="button" class="goback">Back</button>
 	</div>
