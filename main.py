@@ -28,8 +28,8 @@ class fuelUserCredentials(db.Model):
   address1=db.Column(db.String(100),nullable=False)
   address2=db.Column(db.String(100))
   city=db.Column(db.String(100),nullable=False)
-  state=db.Column(db.String(5),nullable=False)
-  zipcode=db.Column(db.String(10),nullable=False)
+  state=db.Column(db.String(2),nullable=False)
+  zipcode=db.Column(db.String(9),nullable=False)
 
 class FuelQuote(db.Model):
   order_id=db.Column(db.Integer,primary_key=True,nullable=False)
@@ -70,7 +70,7 @@ def profile():
   if not g.user:
     return redirect(url_for('index'))
   if request.method=="POST":
-    if ((len(request.form["fullname"])<51)and(len(request.form["fullname"])>0)) and ((len(request.form["address1"])<101)and(len(request.form["address1"])>0)) and ((len(request.form["address2"])<101) and (len(request.form["address2"])>=0)) and ((len(request.form["city"])<101) and (len(request.form["city"])>0)) and (len(request.form["zipcode"])<=9) and (len(request.form["zipcode"])>=5) and request.form["zipcode"].isnumeric():
+    if ((len(request.form["fullname"])<51)and(len(request.form["fullname"])>0)) and ((len(request.form["address1"])<101)and(len(request.form["address1"])>0)) and ((len(request.form["address2"])<101) and (len(request.form["address2"])>=0)) and ((len(request.form["city"])<101) and (len(request.form["city"])>0)) and (len(request.form["zipcode"])<=9) and (len(request.form["zipcode"])>=5) and request.form["zipcode"].isnumeric() and len(request.form["state"])<=2:
       
       print(request.form["zipcode"],request.form["address1"],request.form["address2"],request.form["city"],request.form["state"],request.form["fullname"])
       
@@ -89,12 +89,20 @@ def profile():
       except:
         return render_template('profile.html',error_message="An error occured while updating")
     else:
-      return render_template('profile.html',error_message="Please fix errors with your form.")
-  
+      username = session['user']
+      chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
+      if(len(chk.address2)>0):
+        address2=chk.address2
+      else:
+        address2="Address 2"
+      return render_template('profile.html',error_message="Please fix errors with your form.",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
   if request.method=="GET":
     username = "Settings for " + session['user']
     chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
-    address2="Address 2"
+    if(len(chk.address2)>0):
+      address2=chk.address2
+    else:
+      address2="Address 2"
     if chk.state=="XX":
       return render_template("profile.html",username=username,fullname="",address1="",address2="",city="",zipcode="",state=chk.state)
     else:
@@ -134,7 +142,7 @@ def quote():
     else:
       print("New customer")
 
-    print("Margin now:",margin)
+    print("Margin now POST:",margin)
     
     if int(request.form["quantity"])>1000:
       print("Large order")
@@ -173,15 +181,25 @@ def quote():
     margin = 0
     suggest = 1.50
     odr = FuelQuote.query.filter_by(username=session['user'])
-    if(odr):
+    if(odr.count()>0):
       margin-=.01
+      print(session['user'],"has history",odr.count())
+    else:
+      margin-=0
+    print("Margin now GET:",margin)
+    
     if(chk.state=="TX"):
       margin+=.02
     else:
       margin+=.04
-      
+    print("margin now GET:",margin)
     margin+=.1
+    print("MARGIN NOW GET:",margin)
     suggest = (margin*suggest) + suggest
+    orders = []
+    for order in odr:
+        orders.append([order.order_id,order.requested,order.address,order.deliverydate,order.price,order.total])
+    print(orders)
     return render_template("quote.html",suggest=suggest,address=address)
 
 @app.route('/history',methods=["POST","GET"])
