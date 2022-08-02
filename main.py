@@ -21,6 +21,7 @@ ma = Marshmallow(app)
 
 app.secret_key = os.urandom(24)
 
+##DATABASE CODE
 class fuelUserCredentials(db.Model):
   username = db.Column(db.String(256),primary_key=True,nullable=False)
   password=db.Column(db.String(512),nullable=False)
@@ -43,7 +44,7 @@ class FuelQuote(db.Model):
 db.create_all()
   
   
-
+##INDEX PAGE
 @app.route('/',methods=["POST","GET"])
 def index():
   if request.method=="POST":
@@ -65,6 +66,7 @@ def index():
   else:
     return render_template('index.html')
 
+##PROFILE PAGE
 @app.route('/profile',methods=["POST","GET"])
 def profile():
   if not g.user:
@@ -96,7 +98,7 @@ def profile():
       else:
         address2="Address 2"
       return render_template('profile.html',error_message="Please fix errors with your form.",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
-  if request.method=="GET":
+  else:
     username = "Settings for " + session['user']
     chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
     if(len(chk.address2)>0):
@@ -107,10 +109,8 @@ def profile():
       return render_template("profile.html",username=username,fullname="",address1="",address2="",city="",zipcode="",state=chk.state)
     else:
       return render_template("profile.html",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
-  
-  else:
-    return redirect('profile')
 
+##QUOTE PAGE
 @app.route('/quote',methods=["POST","GET"])
 def quote():
   if not g.user:
@@ -202,6 +202,8 @@ def quote():
     print(orders)
     return render_template("quote.html",suggest=suggest,address=address)
 
+
+##HISTORY PAGE
 @app.route('/history',methods=["POST","GET"])
 def history():
   if not g.user:
@@ -212,6 +214,8 @@ def history():
     orders.append([order.order_id,order.requested,order.address,order.deliverydate,order.price,order.total])
   return render_template("history.html",josh=len(orders),orders=orders)
 
+
+##REGISTER PAGE
 @app.route('/register',methods=["POST","GET"])
 def register():
   if request.method=="POST":
