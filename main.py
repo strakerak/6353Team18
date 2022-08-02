@@ -15,7 +15,7 @@ import hashlib
 #from requests_html import HTML, HTMLSession #Won't know if we need this yet
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mc67964:e4d415c6d3@66.248.199.216/mc67964' #Removed for security purposes
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mc67964:e4d415c6d3@66.248.199.216/mc67964'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -58,6 +58,8 @@ def index():
           return redirect("profile")
         else:
           return redirect("quote")
+      else:
+        return render_template("index.html",error_statement="Wrong password")
     else:
       return render_template("index.html",error_statement="Wrong information")
   else:
@@ -83,7 +85,7 @@ def profile():
       try:
         db.session.commit()
         print("Submitted? lol")
-        return redirect('quote')
+        return redirect((url_for('quote')))
       except:
         return render_template('profile.html',error_message="An error occured while updating")
     else:
@@ -160,25 +162,27 @@ def quote():
       return render_template("quote.html",error_message="Unknown Error, try again")
       
     return redirect('history')
-
-  chk=fuelUserCredentials.query.filter_by(username=session['user']).first()
-  address=""
-  if(chk):
-    if chk.state=="XX":
-      return redirect('profile')
-  margin = 0
-  suggest = 1.50
-  odr = FuelQuote.query.filter_by(username=session['user'])
-  if(odr):
-    margin-=.01
-  if(chk.state=="TX"):
-    margin+=.02
   else:
-    margin+=.04
-    
-  margin+=.1
-  suggest = (margin*suggest) + suggest
-  return render_template("quote.html",suggest=suggest,address=chk.address1)
+    chk=fuelUserCredentials.query.filter_by(username=session['user']).first()
+    address=""
+    if(chk):
+      if chk.state=="XX":
+        return redirect('profile')
+      else:
+        address=chk.address1+", "+chk.city+", "+chk.state+", "+chk.zipcode
+    margin = 0
+    suggest = 1.50
+    odr = FuelQuote.query.filter_by(username=session['user'])
+    if(odr):
+      margin-=.01
+    if(chk.state=="TX"):
+      margin+=.02
+    else:
+      margin+=.04
+      
+    margin+=.1
+    suggest = (margin*suggest) + suggest
+    return render_template("quote.html",suggest=suggest,address=address)
 
 @app.route('/history',methods=["POST","GET"])
 def history():
