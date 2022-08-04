@@ -42,11 +42,13 @@ class MyTestCase(unittest.TestCase):
             address1="sfsafskk",
             address2="sdfdgsghh",
             city="Houston",
-            state="Texas",
+            state="TX",
             zipcode=77025
 
         ))
         self.assertTrue('302' in str(response))
+
+
 
     def test_quoteget_succeeds(self):
         tester = app.test_client(self)
@@ -69,11 +71,13 @@ class MyTestCase(unittest.TestCase):
             username="admin",
             password="password"
         ))
+
         response = tester.post("/quote", data=dict(
             quantity=12,
             DeliveryDate = datetime.datetime.now(),
             SuggestedPrice = 4.0,
-            TotalAmount = 10.0
+            TotalAmount = 10.0,
+            state="TX"
         ))
         self.assertTrue('302' in str(response))
 
