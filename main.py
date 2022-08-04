@@ -17,7 +17,7 @@ import hashlib
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mc67964:e4d415c6d3@66.248.199.216/mc67964'
 db = SQLAlchemy(app)
-ma = Marshmallow(app)
+#ma = Marshmallow(app)
 
 app.secret_key = os.urandom(24)
 
@@ -73,9 +73,8 @@ def profile():
     return redirect(url_for('index'))
   if request.method=="POST":
     if ((len(request.form["fullname"])<51)and(len(request.form["fullname"])>0)) and ((len(request.form["address1"])<101)and(len(request.form["address1"])>0)) and ((len(request.form["address2"])<101) and (len(request.form["address2"])>=0)) and ((len(request.form["city"])<101) and (len(request.form["city"])>0)) and (len(request.form["zipcode"])<=9) and (len(request.form["zipcode"])>=5) and request.form["zipcode"].isnumeric() and len(request.form["state"])<=2:
-      
       print(request.form["zipcode"],request.form["address1"],request.form["address2"],request.form["city"],request.form["state"],request.form["fullname"])
-      
+      print("POST POST POST")
       chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
       chk.fullname=request.form["fullname"]
       chk.address1=request.form["address1"]
@@ -87,9 +86,10 @@ def profile():
       try:
         db.session.commit()
         print("Submitted? lol")
-        return redirect((url_for('quote')))
+        return redirect(url_for('quote'))
       except:
         return render_template('profile.html',error_message="An error occured while updating")
+      #return redirect('quote')
     else:
       username = session['user']
       chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
@@ -98,17 +98,16 @@ def profile():
       else:
         address2="Address 2"
       return render_template('profile.html',error_message="Please fix errors with your form.",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
+  username = "Settings for " + session['user']
+  chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
+  if(len(chk.address2)>0):
+    address2=chk.address2
   else:
-    username = "Settings for " + session['user']
-    chk = fuelUserCredentials.query.filter_by(username=session['user']).first()
-    if(len(chk.address2)>0):
-      address2=chk.address2
-    else:
-      address2="Address 2"
-    if chk.state=="XX":
-      return render_template("profile.html",username=username,fullname="",address1="",address2="",city="",zipcode="",state=chk.state)
-    else:
-      return render_template("profile.html",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
+    address2="Address 2"
+  if chk.state=="XX":
+    return render_template("profile.html",username=username,fullname="",address1="",address2="",city="",zipcode="",state=chk.state)
+  else:
+    return render_template("profile.html",username=username,fullname=chk.fullname,address1=chk.address1,address2=address2,city=chk.city,zipcode=chk.zipcode)
 
 ##QUOTE PAGE
 @app.route('/quote',methods=["POST","GET"])
@@ -119,9 +118,8 @@ def quote():
     print("POST")
     chk=fuelUserCredentials.query.filter_by(username=session['user']).first()
     address=chk.address1 + ", " + chk.city + ", "+chk.state+", " +chk.zipcode
-    if request.form['quantity'].isnumeric() and int(request.form['quantity'])<100 and int(request.form['quantity'])>0:
+    if request.form['quantity'].isnumeric() and int(request.form['quantity'])<10001 and int(request.form['quantity'])>0:
       print(request.form["quantity"],address,request.form["DeliveryDate"],request.form["SuggestedPrice"],request.form["TotalAmount"])
-    print(request.form["quantity"],address,request.form["DeliveryDate"],request.form["SuggestedPrice"],request.form["TotalAmount"])
 
     price=1.50
     margin=0
@@ -165,42 +163,42 @@ def quote():
     try:
       db.session.add(new_order)
       db.session.commit()
+      print("ORDER SUBMITTED")
+      #return redirect(url_for('history'))
     except Exception as e:
       print(e)
       return render_template("quote.html",error_message="Unknown Error, try again")
       
     return redirect('history')
+  chk=fuelUserCredentials.query.filter_by(username=session['user']).first()
+  address=""
+  if(chk):
+    if chk.state=="XX":
+      return redirect('profile')
+    else:
+      address=chk.address1+", "+chk.city+", "+chk.state+", "+chk.zipcode
+  margin = 0
+  suggest = 1.50
+  odr = FuelQuote.query.filter_by(username=session['user'])
+  if(odr.count()>0):
+    margin-=.01
+    print(session['user'],"has history",odr.count())
   else:
-    chk=fuelUserCredentials.query.filter_by(username=session['user']).first()
-    address=""
-    if(chk):
-      if chk.state=="XX":
-        return redirect('profile')
-      else:
-        address=chk.address1+", "+chk.city+", "+chk.state+", "+chk.zipcode
-    margin = 0
-    suggest = 1.50
-    odr = FuelQuote.query.filter_by(username=session['user'])
-    if(odr.count()>0):
-      margin-=.01
-      print(session['user'],"has history",odr.count())
-    else:
-      margin-=0
-    print("Margin now GET:",margin)
-    
-    if(chk.state=="TX"):
-      margin+=.02
-    else:
-      margin+=.04
-    print("margin now GET:",margin)
-    margin+=.1
-    print("MARGIN NOW GET:",margin)
-    suggest = (margin*suggest) + suggest
-    orders = []
-    for order in odr:
-        orders.append([order.order_id,order.requested,order.address,order.deliverydate,order.price,order.total])
-    print(orders)
-    return render_template("quote.html",suggest=suggest,address=address)
+    margin-=0
+  print("Margin now GET:",margin)
+  if(chk.state=="TX"):
+    margin+=.02
+  else:
+    margin+=.04
+  print("margin now GET:",margin)
+  margin+=.1
+  print("MARGIN NOW GET:",margin)
+  suggest = (margin*suggest) + suggest
+  orders = []
+  for order in odr:
+      orders.append([order.order_id,order.requested,order.address,order.deliverydate,order.price,order.total])
+  print(orders)
+  return render_template("quote.html",suggest=suggest,address=address)
 
 
 ##HISTORY PAGE
@@ -236,7 +234,8 @@ def register():
     except Exception as e:
       print(e)
       return render_template("register.html",error_message="Unknown Error, try again")
-  return render_template("register.html")
+  else:
+    return render_template("register.html")
 
 @app.before_request
 def before_request():
