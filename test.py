@@ -22,6 +22,7 @@ class MyTestCase(unittest.TestCase):
 
 
 
+
     def test_profileget_succeeds(self):
         tester = app.test_client(self)
         response = tester.post("/", data=dict(
@@ -37,12 +38,31 @@ class MyTestCase(unittest.TestCase):
             username="admin",
             password="password"
         ))
+        num = random.randint(100, 999)
         response = tester.post("/profile", data=dict(
             fullname="fgsdfgsfgsgsdgrere",
-            address1="sfsafskk",
-            address2="sdfdgsghh",
+            address1="sfsafskk" + str(num),
+            address2="sdfdgsghh" + str(num),
             city="Houston",
             state="TX",
+            zipcode=77025
+
+        ))
+        self.assertTrue('302' in str(response))
+
+    def test_profilepost2_succeeds(self):
+        tester = app.test_client(self)
+        response = tester.post("/", data=dict(
+            username="admin",
+            password="password"
+        ))
+        num = random.randint(100, 999)
+        response = tester.post("/profile", data=dict(
+            fullname="fgsdfgsfgsgsdgrere"+str(num),
+            address1="sfsafskk",
+            address2="",
+            city="Houston",
+            state="XX",
             zipcode=77025
 
         ))
@@ -60,7 +80,8 @@ class MyTestCase(unittest.TestCase):
             quantity=12,
             DeliveryDate = datetime.datetime.now(),
             SuggestedPrice = 4.0,
-            TotalAmount = 10.0
+            TotalAmount = 10.0,
+            state = "TX"
         ))
         response = tester.get("/quote")
         self.assertTrue('200' in str(response))
@@ -77,9 +98,43 @@ class MyTestCase(unittest.TestCase):
             DeliveryDate = datetime.datetime.now(),
             SuggestedPrice = 4.0,
             TotalAmount = 10.0,
-            state="TX"
+            state="AZ"
         ))
         self.assertTrue('302' in str(response))
+
+    def test_quotepost2_succeeds(self):
+        tester = app.test_client(self)
+        response = tester.post("/", data=dict(
+            username="admin",
+            password="password"
+        ))
+
+        response = tester.post("/quote", data=dict(
+            quantity=1500,
+            DeliveryDate = datetime.datetime.now(),
+            SuggestedPrice = 4.0,
+            TotalAmount = 10.0,
+            state="XX"
+        ))
+        self.assertTrue('302' in str(response))
+
+    def test_quotepost3_succeeds(self):
+        tester = app.test_client(self)
+        response = tester.post("/", data=dict(
+            username="admin",
+            password="password"
+        ))
+
+        response = tester.post("/quote", data=dict(
+            quantity=1500,
+            DeliveryDate = datetime.datetime.now(),
+            SuggestedPrice = 4.0,
+            TotalAmount = 10.0,
+            state="TX"
+
+        ))
+        self.assertTrue('302' in str(response))
+
 
     def test_histroyget_succeeds(self):
         tester = app.test_client(self)
